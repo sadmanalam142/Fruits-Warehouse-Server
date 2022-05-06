@@ -11,8 +11,8 @@ app.use(express.json());
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.cqcdf.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-async function run(){
-    try{
+async function run() {
+    try {
         await client.connect();
         const fruitCollection = client.db("fruitsWarehouse").collection("fruits");
 
@@ -21,9 +21,16 @@ async function run(){
             const cursor = fruitCollection.find(query);
             const result = await cursor.toArray();
             res.send(result)
-        })
+        });
+
+        app.get('/fruits/:id', async (req, res) => {
+            const query = {};
+            const result = await fruitCollection.findOne(query);
+            res.send(result)
+        });
     }
-    finally{
+    finally {
+        // await client.close();
     }
 }
 run().catch(console.dir);
