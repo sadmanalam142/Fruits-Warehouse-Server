@@ -36,6 +36,20 @@ async function run() {
             res.send(result)
         })
 
+        app.put('/fruit/:id', async (req, res) => {
+            const id = req.params.id;
+            const updatedQuantity = req.body;
+            const filter = {_id: ObjectId(id)};
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                  quantity: updatedQuantity.quantity
+                }
+              };
+              const result = await fruitCollection.updateOne(filter, updateDoc, options);
+              res.send(result)
+        })
+
         app.delete('/fruit/:id', async (req, res) => {
             const id = req.params.id;
             const query = {_id: ObjectId(id)};
