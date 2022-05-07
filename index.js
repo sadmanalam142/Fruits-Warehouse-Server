@@ -35,6 +35,13 @@ async function run() {
             const result = await fruitCollection.insertOne(newItem);
             res.send(result)
         })
+
+        app.delete('/fruit/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const result = await fruitCollection.deleteOne(query);
+            res.send(result)
+        })
     }
     finally {
         // await client.close();
