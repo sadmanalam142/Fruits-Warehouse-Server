@@ -23,9 +23,17 @@ async function run() {
             res.send(result)
         });
 
+        app.get('/fruits', async (req, res) => {
+            const email = req.query.email;
+            const query = {email: email};
+            const cursor = fruitCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result)
+        });
+
         app.get('/fruit/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id: ObjectId(id)};
+            const query = { _id: ObjectId(id) };
             const result = await fruitCollection.findOne(query);
             res.send(result)
         });
@@ -39,20 +47,20 @@ async function run() {
         app.put('/fruit/:id', async (req, res) => {
             const id = req.params.id;
             const updatedQuantity = req.body;
-            const filter = {_id: ObjectId(id)};
+            const filter = { _id: ObjectId(id) };
             const options = { upsert: true };
             const updateDoc = {
                 $set: {
-                  quantity: updatedQuantity.quantity
+                    quantity: updatedQuantity.quantity
                 }
-              };
-              const result = await fruitCollection.updateOne(filter, updateDoc, options);
-              res.send(result)
+            };
+            const result = await fruitCollection.updateOne(filter, updateDoc, options);
+            res.send(result)
         })
 
         app.delete('/fruit/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id: ObjectId(id)};
+            const query = { _id: ObjectId(id) };
             const result = await fruitCollection.deleteOne(query);
             res.send(result)
         })
