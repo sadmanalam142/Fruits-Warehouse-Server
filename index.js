@@ -19,8 +19,10 @@ function verifyJWT(req, res, next) {
         if (err) {
             res.status(403).send({ message: 'Forbidden access' })
         }
-        req.decoded = decoded
-        next();
+        else {
+            req.decoded = decoded
+            next();
+        }
     })
 }
 
@@ -42,25 +44,24 @@ async function run() {
         });
         // auth
 
-        app.get('/fruits', verifyJWT, async (req, res) => {
+        app.get('/fruits', async (req, res) => {
+            const query = {};
+            const cursor = fruitCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result)
+        })
+
+        app.get('/fruit', verifyJWT, async (req, res) => {
             const decodedEmail = req.decoded.email;
             const email = req.query.email;
-            if (email) {
-                if (email === decodedEmail) {
-                    const query = { email: email };
-                    const cursor = fruitCollection.find(query);
-                    const items = await cursor.toArray();
-                    res.send(items)
-                }
-                else{
-                    res.status(403).send({message: 'Forbidden access'})
-                }
+            if (email === decodedEmail) {
+                const query = { email: email };
+                const cursor = fruitCollection.find(query);
+                const items = await cursor.toArray();
+                res.send(items)
             }
             else {
-                const query = {};
-                const cursor = fruitCollection.find(query);
-                const result = await cursor.toArray();
-                res.send(result)
+                res.status(403).send({ message: 'Forbidden access' })
             }
         });
 
